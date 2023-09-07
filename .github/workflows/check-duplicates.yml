@@ -1,0 +1,22 @@
+name: Duplicate Link Checker
+
+on:
+  pull_request:
+    paths:
+      - 'smallweb.txt'
+
+jobs:
+  check-duplicates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check for duplicate links
+        run: |
+          sed 's/https\:/http\:/' smallweb.txt | sort | uniq -d > duplicates.txt
+          if [ -s duplicates.txt ]; then
+            echo "Duplicate links found:"
+            cat duplicates.txt
+            exit 1
+          fi
